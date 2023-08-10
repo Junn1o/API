@@ -6,6 +6,7 @@ namespace API.Models.Domain
         [Key]
         public int Id { get; set; }
         public int categoryId { get; set; }
+        public Category category { get; set; }
         public int roomId { get; set; }
         public Room room { get; set; }
     }

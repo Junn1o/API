@@ -3,10 +3,10 @@ namespace API.Models.Domain
 {
     public class User
     {
+        [Key]
         public int Id { get; set; }
-        public string FullName { get; set; }
-        public string Password { get; set; }
-        public int Phone { get; set; }
-
+        public string fullname { get; set; }
+        public string password { get; set; }
+        public int phone { get; set; }
     }
 }
