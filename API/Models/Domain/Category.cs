@@ -6,6 +6,6 @@ namespace API.Models.Domain
         [Key]
         public int Id { get; set; }
         public string name { get; set; }
-        public List<Room_Category> categories_room { get; set; }
+        public List<Room_Category> category_room { get; set; }
     }
 }
