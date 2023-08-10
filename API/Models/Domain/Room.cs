@@ -11,7 +11,7 @@ namespace API.Models.Domain
         public decimal price { get; set; }
         public int authorId { get; set; }
         public Author author { get; set; }
-        public List<Room_Category> room_Categories {get; set; }
+        public List<Room_Category> room_categories {get; set; }
         public string address { get; set; }
     }
 }
