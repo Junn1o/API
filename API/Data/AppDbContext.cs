@@ -13,9 +13,9 @@ namespace API.Data
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Author>().HasMany(r => r.rooms).WithOne(a => a.author).HasForeignKey(ai => ai.authorId);
-            modelBuilder.Entity<Room_Category>().HasOne(c => c.category).WithMany(cr => cr.categories_room).HasForeignKey(ci => ci.categoryId);
-            modelBuilder.Entity<Room_Category>().HasOne(r => r.room).WithMany(rc => rc.room_categories).HasForeignKey(ri => ri.roomId);
+            modelBuilder.Entity<Author>().HasMany(r => r.room).WithOne(a => a.author).HasForeignKey(ai => ai.authorId);
+            modelBuilder.Entity<Room_Category>().HasOne(c => c.category).WithMany(cr => cr.category_room).HasForeignKey(ci => ci.categoryId);
+            modelBuilder.Entity<Room_Category>().HasOne(r => r.room).WithMany(rc => rc.room_category).HasForeignKey(ri => ri.roomId);
             modelBuilder.Entity<Room>().Property(p => p.price).HasPrecision(18, 2);
         }
         public DbSet<Category> Category { get; set; }

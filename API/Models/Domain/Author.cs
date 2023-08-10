@@ -8,6 +8,6 @@ namespace API.Models.Domain
         public string fullname { get; set; }
         public string password { get; set; }
         public int phone { get; set; }
-        public List<Room> rooms { get; set; }
+        public List<Room> room { get; set; }
     }
 }
