@@ -8,7 +8,7 @@ namespace API.Models.DTO
         public string password { get; set; }
         public int phone { get; set; }
     }
-    public class UserwithId
+    public class UserwithIdDTO
     {
         public string fullname { get; set; }
         public string password { get; set; }
