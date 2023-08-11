@@ -11,5 +11,6 @@ namespace API.Models.DTO
     public class CategorywithIdDTO
     {
         public string name { get; set; }
+        public List<string> roomlist { get; set; }
     }
 }

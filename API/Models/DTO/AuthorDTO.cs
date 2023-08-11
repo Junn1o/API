@@ -11,7 +11,6 @@ namespace API.Models.DTO
     }
     public class AuthorwithIdDTO
     {
-        public int Id { get; set; }
         public string fullname { get; set; }
         public string password { get; set; }
         public int phone { get; set; }
