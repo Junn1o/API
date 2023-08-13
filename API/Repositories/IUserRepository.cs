@@ -8,8 +8,8 @@ namespace API.Repositories
     {
         List<UserDTO> GetAllUser();
         UserDTO GetUserById(int id);
-        AddUserRequestDTO AddUser(AddUserRequestDTO addUserRequestDTO);
-        AddUserRequestDTO? UpdateUserById(int id, AddUserRequestDTO userDTO);
+        AddUserRequestDTO AddUser(AddUserRequestDTO addUser);
+        AddUserRequestDTO? UpdateUserById(int id, AddUserRequestDTO updateUser);
         User? DeleteUserById(int id);
     }
 }
