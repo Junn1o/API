@@ -2,11 +2,12 @@
 using API.Data;
 using API.Models.DTO;
 using API.Repositories;
-namespace API.Controller
+
+namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class RoomController: ControllerBase
+    public class RoomController : ControllerBase
     {
         private readonly AppDbContext _appDbContext;
         private readonly IRoomRepository _roomRepository;
@@ -25,7 +26,7 @@ namespace API.Controller
         public IActionResult GetRoomwithId(int id)
         {
             var room = _roomRepository.GetRoomwithId(id);
-            if (room !=null)
+            if (room != null)
             {
                 return Ok(room);
             }
@@ -44,8 +45,8 @@ namespace API.Controller
             var roomUpdate = _roomRepository.UpdateRoom(id, updateRoom);
             return Ok(roomUpdate);
         }
-        [HttpPut("delete-room-with-id")]
-        public IActionResult DeleteRoomwithId(int id) 
+        [HttpDelete("delete-room-with-id")]
+        public IActionResult DeleteRoomwithId(int id)
         {
             var roomDelete = _roomRepository.DeleteRoomwithId(id);
             if (roomDelete == null)
