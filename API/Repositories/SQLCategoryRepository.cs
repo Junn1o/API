@@ -39,7 +39,7 @@ namespace API.Repositories
             _appDbContext.SaveChanges();
             return addCategory;
         }
-        public AddCategoryRequestDTO UpdateCategoryById(int id, AddCategoryRequestDTO updateCategory)
+        public AddCategoryRequestDTO UpdateCategory(int id, AddCategoryRequestDTO updateCategory)
         {
             var categoryDomain = _appDbContext.Category.FirstOrDefault(cd => cd.Id == id);
             if (categoryDomain != null)
@@ -49,7 +49,7 @@ namespace API.Repositories
             }
             return updateCategory;
         }
-        public Category? DeleteCategoryById(int id)
+        public Category? DeleteCategory(int id)
         {
             var categoryDomain = _appDbContext.Category.FirstOrDefault(c => c.Id == id);
             var categoryRoom = _appDbContext.Room_Category.Where(n => n.roomId == id);

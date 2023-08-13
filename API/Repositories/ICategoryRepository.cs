@@ -8,7 +8,7 @@ namespace API.Repositories
         List<CategoryDTO> GetAllCategory();
         CategorywithIdDTO GetCategoryById(int id);
         AddCategoryRequestDTO AddCategory(AddCategoryRequestDTO addCategory);
-        AddCategoryRequestDTO UpdateCategoryById(int id, AddCategoryRequestDTO updateCategory);
-        Category? DeleteCategoryById(int id);
+        AddCategoryRequestDTO UpdateCategory(int id, AddCategoryRequestDTO updateCategory);
+        Category? DeleteCategory(int id);
     }
 }
