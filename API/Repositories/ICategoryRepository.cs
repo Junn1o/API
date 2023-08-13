@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using API.Models.Domain;
 using API.Models.DTO;
 
 namespace API.Repositories
@@ -9,6 +9,6 @@ namespace API.Repositories
         CategorywithIdDTO GetCategoryById(int id);
         AddCategoryRequestDTO AddCategory(AddCategoryRequestDTO addCategory);
         AddCategoryRequestDTO UpdateCategoryById(int id, AddCategoryRequestDTO updateCategory);
-        CategoryDTO? DeleteCategoryById(int id);
+        Category? DeleteCategoryById(int id);
     }
 }

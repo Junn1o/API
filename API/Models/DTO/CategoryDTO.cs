@@ -6,7 +6,7 @@ namespace API.Models.DTO
     {
         public int Id { get; set; }
         public string name { get; set; }
-        public List<string> roomlist { get; set; }
+        //public List<string> roomlist { get; set; }
     }
     public class CategorywithIdDTO
     {
