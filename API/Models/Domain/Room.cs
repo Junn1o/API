@@ -8,6 +8,7 @@ namespace API.Models.Domain
         [Key]
         public int Id { get; set; }
         public string title { get; set; }
+        public string description { get; set; }
         public decimal price { get; set; }
         public int authorId { get; set; }
         public Author author { get; set; }
