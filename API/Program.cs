@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using System;
 using API.Data;
+using API.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +13,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connectionString));
+builder.Services.AddScoped<IRoomRepository, SQLRoomRepository>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

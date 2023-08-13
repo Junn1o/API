@@ -7,6 +7,7 @@ namespace API.Models.DTO
         public string title { get; set; }
         public decimal price { get; set; }
         public string address { get; set; }
+        public string description { get; set; }
         public string authorname { get; set; }
         public List<string> categorylist { get; set; }
     }
@@ -15,6 +16,7 @@ namespace API.Models.DTO
         public string title { get; set; }
         public decimal price { get; set; }
         public string address { get; set; }
+        public string description { get; set; }
         public string authorname { get; set; }
         public List<string> categorylist { get; set; }
     }
