@@ -24,12 +24,11 @@ namespace API.Repositories
             }).ToList();
             return roomlist;
         }
-        public RoomDTO GetRoomwithId(int id)
+        public RoomwithIdDTO GetRoomwithId(int id)
         {
             var getRoombyDomain = _appDbContext.Room.Where(rd => rd.Id == id);
-            var getRoombyDTO = getRoombyDomain.Select(room => new RoomDTO()
+            var getRoombyDTO = getRoombyDomain.Select(room => new RoomwithIdDTO()
             {
-                Id = id,
                 title= room.title,
                 authorname = room.author.fullname,
                 address = room.address,
