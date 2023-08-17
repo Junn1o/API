@@ -45,7 +45,8 @@ namespace API.Repositories
                 title = addRoom.title,
                 price = addRoom.price,
                 address = addRoom.address,
-                description = addRoom.description
+                description = addRoom.description,
+                authorId = addRoom.authorId
             };
             _appDbContext.Room.Add(roomDomain);
             _appDbContext.SaveChanges();
@@ -70,6 +71,7 @@ namespace API.Repositories
                 roomDomain.price = updateRoom.price;
                 roomDomain.address = updateRoom.address;
                 roomDomain.description = updateRoom.description;
+                roomDomain.authorId = updateRoom.authorId;
                 _appDbContext.SaveChanges();
             }
             var categoryDomain = _appDbContext.Room_Category.Where(a=>a.roomId == id).ToList();
