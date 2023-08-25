@@ -60,7 +60,7 @@ namespace API.Repositories
         }
         public List<RoomDTO> GetAllRoomnotHire()
         {
-            var roomlist = _appDbContext.Room.Where(room => !room.isHire).Select(room => new RoomDTO()
+            var roomlist = _appDbContext.Room.Where(room => !room.isHire).Where(room => room.isApprove).Select(room => new RoomDTO()
             {
                 Id = room.Id,
                 title = room.title,
@@ -117,8 +117,8 @@ namespace API.Repositories
                 address = addRoom.address,
                 description = addRoom.description,
                 authorId = addRoom.authorId,
-                isApprove = false,
-                isHire = false,
+                isApprove = addRoom.isApprove,
+                isHire = addRoom.isHire,
             };
             _appDbContext.Room.Add(roomDomain);
             _appDbContext.SaveChanges();
@@ -134,7 +134,7 @@ namespace API.Repositories
             }
             return addRoom;
         }
-        public AddRoomRequestDTO UpdateRoom(int id, AddRoomRequestDTO updateRoom) 
+        public AddRoomRequestDTO UpdateRoom(int id, AddRoomRequestDTO updateRoom)
         {
             var roomDomain = _appDbContext.Room.FirstOrDefault(r=>r.Id == id);
             if (roomDomain != null)

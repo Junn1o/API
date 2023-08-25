@@ -22,25 +22,25 @@ namespace API.Controllers
             var roomlist = _roomRepository.GetAllRoom();
             return Ok(roomlist);
         }
-        [HttpGet("get-all-room-is-hire")]
+        [HttpGet("get-all-room-hired")]
         public IActionResult GetAllRoomisHire()
         {
             var roomlist = _roomRepository.GetAllRoomisHire();
             return Ok(roomlist);
         }
-        [HttpGet("get-all-room-is-not-hire")]
+        [HttpGet("get-all-room-not-hire")]
         public IActionResult GetAllRoomnotHire()
         {
             var roomlist = _roomRepository.GetAllRoomnotHire();
             return Ok(roomlist);
         }
-        [HttpGet("get-all-room-is-approve")]
+        [HttpGet("get-all-room-approved")]
         public IActionResult GetAllRoomisApprove()
         {
             var roomlist = _roomRepository.GetAllRoomisApprove();
             return Ok(roomlist);
         }
-        [HttpGet("get-all-room-is-not-approve")]
+        [HttpGet("get-all-room-not-approve")]
         public IActionResult GetAllRoomnotApprove()
         {
             var roomlist = _roomRepository.GetAllRoomnotApprove();
