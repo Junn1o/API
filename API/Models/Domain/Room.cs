@@ -13,6 +13,8 @@ namespace API.Models.Domain
         public int authorId { get; set; }
         public Author author { get; set; }
         public List<Room_Category> room_category {get; set; }
+        public bool isApprove { get; set; }
+        public bool isHire { get; set; }
         public string address { get; set; }
     }
 }

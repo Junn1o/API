@@ -9,6 +9,8 @@ namespace API.Models.DTO
         public string address { get; set; }
         public string description { get; set; }
         public string authorname { get; set; }
+        public bool isApprove { get; set; }
+        public bool isHire { get; set; }
         public List<string> categorylist { get; set; }
     }
     public class RoomwithIdDTO
@@ -18,6 +20,8 @@ namespace API.Models.DTO
         public string address { get; set; }
         public string description { get; set; }
         public string authorname { get; set; }
+        public bool isApprove { get; set; }
+        public bool isHire { get; set; }
         public List<string> categorylist { get; set; }
     }
 }

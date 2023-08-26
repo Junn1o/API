@@ -20,6 +20,8 @@ namespace API.Repositories
                 address = room.address,
                 description = room.description,
                 price = room.price,
+                isApprove = room.isApprove,
+                isHire = room.isHire,
                 categorylist = room.room_category.Select(rc => rc.category.name).ToList()
             }).ToList();
             return roomlist;
@@ -34,9 +36,77 @@ namespace API.Repositories
                 address = room.address,
                 description = room.description,
                 price = room.price,
+                isApprove = room.isApprove,
+                isHire = room.isHire,
                 categorylist = room.room_category.Select(rc=> rc.category.name).ToList()
             }).FirstOrDefault();
             return getRoombyDTO;
+        }
+        public List<RoomDTO> GetAllRoomisHire()
+        {
+            var roomlist = _appDbContext.Room.Where(room => room.isHire).Select(room => new RoomDTO()
+            {
+                Id = room.Id,
+                title = room.title,
+                authorname = room.author.fullname,
+                address = room.address,
+                description = room.description,
+                price = room.price,
+                isApprove = room.isApprove,
+                isHire = room.isHire,
+                categorylist = room.room_category.Select(rc => rc.category.name).ToList()
+            }).ToList();
+            return roomlist;
+        }
+        public List<RoomDTO> GetAllRoomnotHire()
+        {
+            var roomlist = _appDbContext.Room.Where(room => !room.isHire).Where(room => room.isApprove).Select(room => new RoomDTO()
+            {
+                Id = room.Id,
+                title = room.title,
+                authorname = room.author.fullname,
+                address = room.address,
+                description = room.description,
+                price = room.price,
+                isApprove = room.isApprove,
+                isHire = room.isHire,
+                categorylist = room.room_category.Select(rc => rc.category.name).ToList()
+            }).ToList();
+            return roomlist;
+        }
+
+        public List<RoomDTO> GetAllRoomnotApprove()
+        {
+            var roomlist = _appDbContext.Room.Where(room => !room.isApprove).Select(room => new RoomDTO()
+            {
+                Id = room.Id,
+                title = room.title,
+                authorname = room.author.fullname,
+                address = room.address,
+                description = room.description,
+                price = room.price,
+                isApprove = room.isApprove,
+                isHire = room.isHire,
+                categorylist = room.room_category.Select(rc => rc.category.name).ToList()
+            }).ToList();
+            return roomlist;
+        }
+
+        public List<RoomDTO> GetAllRoomisApprove()
+        {
+            var roomlist = _appDbContext.Room.Where(room => room.isApprove).Select(room => new RoomDTO()
+            {
+                Id = room.Id,
+                title = room.title,
+                authorname = room.author.fullname,
+                address = room.address,
+                description = room.description,
+                price = room.price,
+                isApprove = room.isApprove,
+                isHire = room.isHire,
+                categorylist = room.room_category.Select(rc => rc.category.name).ToList()
+            }).ToList();
+            return roomlist;
         }
         public AddRoomRequestDTO AddRoom(AddRoomRequestDTO addRoom)
         {
@@ -45,7 +115,10 @@ namespace API.Repositories
                 title = addRoom.title,
                 price = addRoom.price,
                 address = addRoom.address,
-                description = addRoom.description
+                description = addRoom.description,
+                authorId = addRoom.authorId,
+                isApprove = addRoom.isApprove,
+                isHire = addRoom.isHire,
             };
             _appDbContext.Room.Add(roomDomain);
             _appDbContext.SaveChanges();
@@ -61,7 +134,7 @@ namespace API.Repositories
             }
             return addRoom;
         }
-        public AddRoomRequestDTO UpdateRoom(int id, AddRoomRequestDTO updateRoom) 
+        public AddRoomRequestDTO UpdateRoom(int id, AddRoomRequestDTO updateRoom)
         {
             var roomDomain = _appDbContext.Room.FirstOrDefault(r=>r.Id == id);
             if (roomDomain != null)
@@ -70,6 +143,9 @@ namespace API.Repositories
                 roomDomain.price = updateRoom.price;
                 roomDomain.address = updateRoom.address;
                 roomDomain.description = updateRoom.description;
+                roomDomain.authorId = updateRoom.authorId;
+                roomDomain.isApprove = updateRoom.isApprove;
+                roomDomain.isHire = updateRoom.isHire;
                 _appDbContext.SaveChanges();
             }
             var categoryDomain = _appDbContext.Room_Category.Where(a=>a.roomId == id).ToList();
