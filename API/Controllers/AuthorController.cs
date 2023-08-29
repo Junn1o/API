@@ -29,7 +29,7 @@ namespace API.Controllers
             var author = _authorRepository.GetAuthorById(id);
             if (author != null)
             {
-                return Ok(User);
+                return Ok(author);
             }
             else
                 return NotFound("Data Empty");

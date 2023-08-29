@@ -23,7 +23,7 @@ namespace API.Repositories
             }).ToList();
             return authorlist;
         }
-        public AuthorDTO GetAuthorById(int id)
+        public AuthorwithIdDTO GetAuthorById(int id)
         {
             var getAuthorbyDomain = _appDbContext.Author.Where(cd => cd.Id == id);
             var getCategorybyDTO = getAuthorbyDomain.Select(author => new AuthorwithIdDTO()
@@ -31,7 +31,7 @@ namespace API.Repositories
                 fullname = author.fullname,
                 password= author.password,
                 phone = author.phone,
-                roomlist = author.room.Select(cr => cr.room_category.id).ToList()
+                roomlist = author.room.Select(r=>r.title).ToList()
             }).FirstOrDefault();
             return getCategorybyDTO;
         }
@@ -60,16 +60,30 @@ namespace API.Repositories
         public Author? DeleteAuthorById(int id)
         {
             var authorDomain = _appDbContext.Author.FirstOrDefault(c => c.Id == id);
-            var authorRoom = _appDbContext.Room_Category.Where(n => n.roomId == id);
+            var authorRoom = _appDbContext.Room.Where(ar => ar.authorId == id).ToList();
             if (authorDomain != null)
             {
                 if (authorRoom.Any())
                 {
-                    _appDbContext.Room_Category.RemoveRange(authorRoom);
+                    foreach (var room in authorRoom)
+                    {
+                        var authorRoomCategory = _appDbContext.Room_Category.Where(n => n.roomId == room.Id).ToList();
+                        if (authorRoomCategory.Any())
+                        {
+                            _appDbContext.Room_Category.RemoveRange(authorRoomCategory);
+                            _appDbContext.SaveChanges();
+                        }
+                    }
+                    _appDbContext.Room.RemoveRange(authorRoom);
+                    _appDbContext.SaveChanges();
+                    _appDbContext.Author.Remove(authorDomain);
                     _appDbContext.SaveChanges();
                 }
-                _appDbContext.Author.Remove(authorDomain);
-                _appDbContext.SaveChanges();
+                else
+                {
+                    _appDbContext.Author.Remove(authorDomain);
+                    _appDbContext.SaveChanges();
+                }
             }
             return authorDomain;
         }

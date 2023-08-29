@@ -9,6 +9,9 @@
         public int authorId { get; set; }
         public bool isApprove { get; set; }
         public bool isHire { get; set; }
+        public int area { get; set; }
         public List<int> categoryids { get; set; }
+        public List<int> roomId { get; set; }
+        public IFormFile Image;
     }
 }

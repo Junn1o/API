@@ -2,6 +2,7 @@
 using API.Data;
 using API.Models.DTO;
 using API.Repositories;
+using Microsoft.AspNetCore.Cors;
 
 namespace API.Controllers
 {
@@ -28,6 +29,7 @@ namespace API.Controllers
             var roomlist = _roomRepository.GetAllRoomisHire();
             return Ok(roomlist);
         }
+        [EnableCors("MyPolicy")]
         [HttpGet("get-all-room-not-hire")]
         public IActionResult GetAllRoomnotHire()
         {

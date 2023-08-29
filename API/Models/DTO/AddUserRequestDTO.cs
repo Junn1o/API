@@ -4,6 +4,6 @@
     {
         public string fullname { get; set; }
         public string password { get; set; }
-        public int phone { get; set; }
+        public string phone { get; set; }
     }
 }

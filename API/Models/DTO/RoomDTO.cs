@@ -11,6 +11,8 @@ namespace API.Models.DTO
         public string authorname { get; set; }
         public bool isApprove { get; set; }
         public bool isHire { get; set; }
+        public int area { get; set; }
+        public List<byte[]> image { get; set; }
         public List<string> categorylist { get; set; }
     }
     public class RoomwithIdDTO
@@ -22,6 +24,8 @@ namespace API.Models.DTO
         public string authorname { get; set; }
         public bool isApprove { get; set; }
         public bool isHire { get; set; }
+        public int area { get; set; }
+        public List<byte[]> image { get; set; }
         public List<string> categorylist { get; set; }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using API.Data;
 using API.Models.Domain;
 using API.Models.DTO;
+using System.IO;
 namespace API.Repositories
 {
     public class SQLRoomRepository : IRoomRepository
@@ -119,6 +120,7 @@ namespace API.Repositories
                 authorId = addRoom.authorId,
                 isApprove = addRoom.isApprove,
                 isHire = addRoom.isHire,
+                area = addRoom.area,
             };
             _appDbContext.Room.Add(roomDomain);
             _appDbContext.SaveChanges();
@@ -131,6 +133,14 @@ namespace API.Repositories
                 };
                 _appDbContext.Room_Category.Add(room_category);
                 _appDbContext.SaveChanges();
+            }
+            foreach(var id in addRoom.roomId)
+            {
+                var room_photo = new Photo()
+                {
+                    roomId = roomDomain.Id,
+                    Id = id,
+                };
             }
             return addRoom;
         }
