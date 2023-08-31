@@ -60,10 +60,18 @@ namespace API.Controllers
                 return NotFound("Data Empty");
         }
         [HttpPost("add - room")]
-        public IActionResult AddRoom([FromBody] AddRoomRequestDTO addRoom)
+        public IActionResult AddRoom([FromForm] AddRoomRequestDTO addRoom)
         {
-            var roomAdd = _roomRepository.AddRoom(addRoom);
-            return Ok(roomAdd);
+            IFormFile imageFile = Request.Form.Files["imageFile"]; // Assuming the form field is named "imageFile"
+
+            if (imageFile == null)
+            {
+                return BadRequest("No image provided.");
+            }
+
+            var room = _roomRepository.AddRoom(addRoom, imageFile);
+
+            return Ok(room);
         }
         [HttpPut("update-room-with-id")]
         public IActionResult UpdateRoom(int id, [FromBody] AddRoomRequestDTO updateRoom)

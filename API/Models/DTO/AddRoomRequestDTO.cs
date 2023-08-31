@@ -12,6 +12,5 @@
         public int area { get; set; }
         public List<int> categoryids { get; set; }
         public List<int> roomId { get; set; }
-        public IFormFile Image;
     }
 }

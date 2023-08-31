@@ -10,7 +10,7 @@ namespace API.Repositories
         List<RoomDTO> GetAllRoomnotHire();
         List<RoomDTO> GetAllRoomnotApprove();
         List<RoomDTO> GetAllRoomisApprove();
-        AddRoomRequestDTO AddRoom(AddRoomRequestDTO addRoom);
+        AddRoomRequestDTO AddRoom(AddRoomRequestDTO addRoom, IFormFile imageFile);
         AddRoomRequestDTO UpdateRoom(int id, AddRoomRequestDTO updateRoom);
         Room? DeleteRoomwithId(int id);
     }
