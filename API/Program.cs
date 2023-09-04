@@ -18,6 +18,7 @@ builder.Services.AddScoped<IRoomRepository, SQLRoomRepository>();
 builder.Services.AddScoped<ICategoryRepository, SQLCategoryRepository>();
 builder.Services.AddScoped<IUserRepository, SQLUserRepository>();
 builder.Services.AddScoped<IAuthorRepository, SQLAuthorRepository>();
+//builder.Services.AddScoped<IImageRepository, ImageRepository>();
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 builder.Services.AddCors(options =>
 {

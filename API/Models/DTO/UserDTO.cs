@@ -7,7 +7,7 @@ namespace API.Models.DTO
         public string fullname { get; set; }
         public string password { get; set; }
         public string phone { get; set; }
-        public string imagepath { get; set; }
+        public string? actuallFile { get; set; }
     }
     public class UserwithIdDTO
     {
@@ -15,5 +15,6 @@ namespace API.Models.DTO
         public string password { get; set; }
         public string phone { get; set; }
         public string imagepath { get; set; }
+        public string? actuallFile { get; set; }
     }
 }

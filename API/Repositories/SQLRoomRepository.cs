@@ -11,6 +11,7 @@ namespace API.Repositories
         {
             _appDbContext = appDbContext;
         }
+
         public List<RoomDTO> GetAllRoom()
         {
             var roomlist = _appDbContext.Room.Select(room => new RoomDTO()
@@ -109,7 +110,7 @@ namespace API.Repositories
             }).ToList();
             return roomlist;
         }
-        public AddRoomRequestDTO AddRoom(AddRoomRequestDTO addRoom)
+        public AddRoomRequestDTO AddRoom(AddRoomRequestDTO addRoom, IFormFile imageFile)
         {
             var roomDomain = new Room
             {
@@ -140,7 +141,9 @@ namespace API.Repositories
                 {
                     roomId = roomDomain.Id,
                     Id = id,
+                    //imagepath=_imageRepository.SaveImage(imageFile)
                 };
+                
             }
             return addRoom;
         }

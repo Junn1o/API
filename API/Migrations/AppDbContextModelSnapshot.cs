@@ -162,11 +162,11 @@ namespace API.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("fullname")
-                        .IsRequired()
+                    b.Property<string>("actualFile")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("imagepath")
+                    b.Property<string>("fullname")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("password")
