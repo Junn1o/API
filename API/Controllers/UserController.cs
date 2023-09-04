@@ -33,14 +33,19 @@ namespace API.Controllers
             else
                 return NotFound("Data Empty");
         }
-        [HttpPost("add - user")]
-        public IActionResult AddUser([FromBody] AddUserRequestDTO addUser)
+        [HttpPost("add-user")]
+        public IActionResult AddUser([FromForm] AddUserRequestDTO addUser)
         {
             var userAdd = _userRepository.AddUser(addUser);
-            return Ok(userAdd);
+            if (userAdd == null)
+            {
+                return null;
+            }
+            else
+                return Ok(userAdd);
         }
         [HttpPut("update-user-with-id")]
-        public IActionResult UpdateUser(int id, [FromBody] AddUserRequestDTO updateUser)
+        public IActionResult UpdateUser(int id, [FromForm] AddUserRequestDTO updateUser)
         {
             var userUpdate = _userRepository.UpdateUserById(id, updateUser);
             return Ok(userUpdate);
@@ -51,7 +56,7 @@ namespace API.Controllers
             var userDelete = _userRepository.DeleteUserById(id);
             if (userDelete == null)
             {
-                return StatusCode(500);
+                return Ok("User already delete or error");
             }
             else
             {

@@ -7,12 +7,9 @@ namespace API.Repositories
     public class SQLRoomRepository : IRoomRepository
     {
         private readonly AppDbContext _appDbContext;
-        private readonly string _uploadsPath;
-        private readonly IImageRepository _imageRepository;
-        public SQLRoomRepository(AppDbContext appDbContext, IImageRepository imageRepository)
+        public SQLRoomRepository(AppDbContext appDbContext)
         {
             _appDbContext = appDbContext;
-            _imageRepository = imageRepository;
         }
 
         public List<RoomDTO> GetAllRoom()
@@ -144,7 +141,7 @@ namespace API.Repositories
                 {
                     roomId = roomDomain.Id,
                     Id = id,
-                    imagepath=_imageRepository.SaveImage(imageFile)
+                    //imagepath=_imageRepository.SaveImage(imageFile)
                 };
                 
             }
