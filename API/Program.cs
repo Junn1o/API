@@ -3,6 +3,7 @@ using System;
 using API.Data;
 using API.Repositories;
 using Microsoft.AspNetCore.Cors.Infrastructure;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,10 +40,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCors("MyPolicy");
+app.UseStaticFiles();
 app.UseHttpsRedirection();
 app.UseRouting();
-
-app.UseCors();
 app.UseAuthorization();
 
 

@@ -7,7 +7,8 @@ namespace API.Models.DTO
         public string fullname { get; set; }
         public string password { get; set; }
         public string phone { get; set; }
-        public string imagepath { get; set; }
+        public IFormFile? FileUri { set; get; }
+        public string? actualFile { get; set; }
         //public List<string> roomlist { get; set; }
     }
     public class AuthorwithIdDTO
@@ -15,7 +16,8 @@ namespace API.Models.DTO
         public string fullname { get; set; }
         public string password { get; set; }
         public string phone { get; set; }
-        public string imagepath { get; set; }
+        public IFormFile? FileUri { set; get; }
+        public string? actualFile { get; set; }
         public List<string> roomlist { get; set; }
     }
 }
