@@ -1,7 +1,11 @@
 ﻿using API.Data;
 using API.Models.Domain;
 using API.Models.DTO;
+using System;
+using System.Diagnostics.Metrics;
 using System.IO;
+using System.Linq;
+
 namespace API.Repositories
 {
     public class SQLRoomRepository : IRoomRepository
@@ -18,7 +22,7 @@ namespace API.Repositories
             {
                 Id = room.Id,
                 title = room.title,
-                authorname = room.author.fullname,
+                authorname = room.author.firstname+" "+room.author.lastname,
                 address = room.address,
                 description = room.description,
                 price = room.price,
@@ -33,14 +37,14 @@ namespace API.Repositories
             var getRoombyDomain = _appDbContext.Room.Where(rd => rd.Id == id);
             var getRoombyDTO = getRoombyDomain.Select(room => new RoomwithIdDTO()
             {
-                title= room.title,
-                authorname = room.author.fullname,
+                title = room.title,
+                authorname = room.author.firstname + " " + room.author.lastname,
                 address = room.address,
                 description = room.description,
                 price = room.price,
                 isApprove = room.isApprove,
                 isHire = room.isHire,
-                categorylist = room.room_category.Select(rc=> rc.category.name).ToList()
+                categorylist = room.room_category.Select(rc => rc.category.name).ToList()
             }).FirstOrDefault();
             return getRoombyDTO;
         }
@@ -50,7 +54,7 @@ namespace API.Repositories
             {
                 Id = room.Id,
                 title = room.title,
-                authorname = room.author.fullname,
+                authorname = room.author.firstname + " " + room.author.lastname,
                 address = room.address,
                 description = room.description,
                 price = room.price,
@@ -66,7 +70,7 @@ namespace API.Repositories
             {
                 Id = room.Id,
                 title = room.title,
-                authorname = room.author.fullname,
+                authorname = room.author.firstname + " " + room.author.lastname,
                 address = room.address,
                 description = room.description,
                 price = room.price,
@@ -83,7 +87,7 @@ namespace API.Repositories
             {
                 Id = room.Id,
                 title = room.title,
-                authorname = room.author.fullname,
+                authorname = room.author.firstname + " " + room.author.lastname,
                 address = room.address,
                 description = room.description,
                 price = room.price,
@@ -100,7 +104,7 @@ namespace API.Repositories
             {
                 Id = room.Id,
                 title = room.title,
-                authorname = room.author.fullname,
+                authorname = room.author.firstname + " " + room.author.lastname,
                 address = room.address,
                 description = room.description,
                 price = room.price,
@@ -110,7 +114,7 @@ namespace API.Repositories
             }).ToList();
             return roomlist;
         }
-        public AddRoomRequestDTO AddRoom(AddRoomRequestDTO addRoom, IFormFile imageFile)
+        public AddRoomRequestDTO AddRoom(AddRoomRequestDTO addRoom)
         {
             var roomDomain = new Room
             {
@@ -125,31 +129,35 @@ namespace API.Repositories
             };
             _appDbContext.Room.Add(roomDomain);
             _appDbContext.SaveChanges();
-            foreach(var id in addRoom.categoryids)
+            var author = _appDbContext.Author.FirstOrDefault(author => author.Id == roomDomain.Id);
+            string path = "";
+            if (author == null)
+            {
+                throw new FileNotFoundException("asgasgasg");
+            }
+            if (addRoom.FileUri != null)
+            {
+                path = UploadImage1(addRoom.FileUri, author.firstname, addRoom.title);
+                addRoom.actualFile = path;
+                roomDomain.actualFile = addRoom.actualFile;
+                _appDbContext.Room.Add(roomDomain);
+            }
+            _appDbContext.SaveChanges();
+            foreach (var id in addRoom.categoryids)
             {
                 var room_category = new Room_Category()
                 {
                     roomId = roomDomain.Id,
                     categoryId = id,
                 };
-                _appDbContext.Room_Category.Add(room_category);
-                _appDbContext.SaveChanges();
-            }
-            foreach(var id in addRoom.roomId)
-            {
-                var room_photo = new Photo()
-                {
-                    roomId = roomDomain.Id,
-                    Id = id,
-                    //imagepath=_imageRepository.SaveImage(imageFile)
-                };
-                
+                //_appDbContext.Room_Category.Add(room_category);
+                //_appDbContext.SaveChanges();
             }
             return addRoom;
         }
         public AddRoomRequestDTO UpdateRoom(int id, AddRoomRequestDTO updateRoom)
         {
-            var roomDomain = _appDbContext.Room.FirstOrDefault(r=>r.Id == id);
+            var roomDomain = _appDbContext.Room.FirstOrDefault(r => r.Id == id);
             if (roomDomain != null)
             {
                 roomDomain.title = updateRoom.title;
@@ -161,18 +169,18 @@ namespace API.Repositories
                 roomDomain.isHire = updateRoom.isHire;
                 _appDbContext.SaveChanges();
             }
-            var categoryDomain = _appDbContext.Room_Category.Where(a=>a.roomId == id).ToList();
-            if (categoryDomain!=null)
+            var categoryDomain = _appDbContext.Room_Category.Where(a => a.roomId == id).ToList();
+            if (categoryDomain != null)
             {
                 _appDbContext.Room_Category.RemoveRange(categoryDomain);
                 _appDbContext.SaveChanges();
             }
-            foreach(var categoryid in updateRoom.categoryids)
+            foreach (var categoryid in updateRoom.categoryids)
             {
                 var room_category = new Room_Category()
                 {
-                    roomId=id,
-                    categoryId=categoryid,
+                    roomId = id,
+                    categoryId = categoryid,
                 };
                 _appDbContext.Room_Category.Add(room_category);
                 _appDbContext.SaveChanges();
@@ -181,9 +189,9 @@ namespace API.Repositories
         }
         public Room? DeleteRoomwithId(int id)
         {
-            var roomDomain = _appDbContext.Room.FirstOrDefault(r=>r.Id == id);
+            var roomDomain = _appDbContext.Room.FirstOrDefault(r => r.Id == id);
             var roomCategory = _appDbContext.Room_Category.Where(n => n.roomId == id);
-            if (roomDomain!=null)
+            if (roomDomain != null)
             {
                 if (roomCategory.Any())
                 {
@@ -194,6 +202,105 @@ namespace API.Repositories
                 _appDbContext.SaveChanges();
             }
             return roomDomain;
+        }
+        public List<string> UploadImage(List<IFormFile> file, string author, string roomtitle)
+        {
+            int counter = 1;
+            List<string> imagePaths = new List<string>();
+            foreach (var image in file)
+            {
+                string count = $"{counter++}";
+                var uploadFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "user", author, "uploads", roomtitle, roomtitle + "-" + "image_" + count);
+                Directory.CreateDirectory(uploadFolderPath);
+                var filePath = Path.Combine(uploadFolderPath, roomtitle);
+                using (FileStream ms = new FileStream(filePath, FileMode.Create))
+                {
+                    image.CopyTo(ms);
+                }
+                string relativePath = Path.Combine("images", "user", author, "uploads", roomtitle, roomtitle + "-" + "image_" + count);
+                imagePaths.Add(relativePath);
+            }
+            return imagePaths;
+        }
+        public string UploadImage1(IFormFile[] file, string author, string roomtitle)
+        {
+            //var fileName = Path.GetFileName(image.FileName);
+            int counter = 1;
+            string picture = "";
+            foreach (var image in file)
+            {
+                string count = $"{counter++}";
+                var uploadFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "user", author, "uploads", roomtitle, roomtitle + "-" + "image_" + count);
+                Directory.CreateDirectory(uploadFolderPath);
+                var filePath = Path.Combine(uploadFolderPath, roomtitle);
+                using (FileStream ms = new FileStream(filePath, FileMode.Create))
+                {
+                    image.CopyTo(ms);
+                }
+                string relativePath = Path.Combine("images", "user", author, "uploads", roomtitle, roomtitle + "-" + "image_" + count);
+                picture += relativePath + ";";
+            }
+            //var path = Path.Combine("images", "room", username + "-" + fileName, fileName);
+            return picture;
+        }
+        //public string UploadImage2(IFormFile file, string author, string roomtitle)
+        //{
+        //    int counter = 1;
+        //    List<string> imagePaths = new List<string>();
+        //    foreach (var image in file)
+        //    {
+        //        string count = $"{counter++}";
+        //        var uploadFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "user", author, "uploads", roomtitle, roomtitle + "-" + "image_" + count);
+        //        Directory.CreateDirectory(uploadFolderPath);
+        //        var filePath = Path.Combine(uploadFolderPath, roomtitle);
+        //        using (FileStream ms = new FileStream(filePath, FileMode.Create))
+        //        {
+        //            image.CopyTo(ms);
+        //        }
+        //        string relativePath = Path.Combine("images", "user", author, "uploads", roomtitle, roomtitle + "-" + "image_" + count);
+        //        imagePaths.Add(relativePath);
+        //    }
+        //    return imagePaths;
+        //}
+        //public string UpdateImage(IFormFile newImage, string oldRelativePath, string username)
+        //{
+        //    if (oldRelativePath != null)
+        //    {
+        //        var oldFullPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", oldRelativePath);
+        //        if (!File.Exists(oldFullPath))
+        //        {
+        //            return null;
+        //        }
+        //        else
+        //        {
+        //            var oldDirectory = Path.GetDirectoryName(oldFullPath);
+        //            var newRelativePath = UploadImage(newImage, username);
+        //            File.Delete(oldFullPath);
+        //            return newRelativePath;
+        //        }
+        //    }
+        //    else
+        //    {
+        //        return null;
+        //    }
+        //}
+        public bool DeleteImage(string oldRelativePath)
+        {
+            //string fileName = Path.GetFileName(oldRelativePath);
+            string parentDirectoryName = Path.GetFileName(Path.GetDirectoryName(oldRelativePath));
+            //var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", relativePath);
+            var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "user", parentDirectoryName);
+            //!File.Exists(filePath)
+            if (!Directory.Exists(folderPath))
+            {
+                return false;
+            }
+            else
+            {
+                //File.Delete(filePath);
+                Directory.Delete(folderPath, true);
+                return true;
+            }
         }
     }
 }

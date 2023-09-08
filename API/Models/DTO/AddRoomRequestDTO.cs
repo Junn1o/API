@@ -1,4 +1,6 @@
-﻿namespace API.Models.DTO
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace API.Models.DTO
 {
     public class AddRoomRequestDTO
     {
@@ -10,9 +12,10 @@
         public bool isApprove { get; set; }
         public bool isHire { get; set; }
         public int area { get; set; }
-        public IFormFile? FileUri { set; get; }
+        [NotMapped]
+        public IFormFile[]? FileUri { set; get; }
         public string? actualFile { get; set; }
         public List<int> categoryids { get; set; }
-        public List<int> roomId { get; set; }
+        //public List<int> roomId { get; set; }
     }
 }

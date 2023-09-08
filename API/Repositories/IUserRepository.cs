@@ -7,7 +7,7 @@ namespace API.Repositories
     public interface IUserRepository
     {
         List<UserDTO> GetAllUser();
-        UserDTO GetUserById(int id);
+        UserwithIdDTO GetUserById(int id);
         AddUserRequestDTO AddUser(AddUserRequestDTO addUser);
         AddUserRequestDTO? UpdateUserById(int id, AddUserRequestDTO updateUser);
         User? DeleteUserById(int id);

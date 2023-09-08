@@ -1,5 +1,6 @@
 ﻿
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace API.Models.Domain
 {
@@ -18,5 +19,8 @@ namespace API.Models.Domain
         public bool isHire { get; set; }
         public int area { get; set; }
         public string address { get; set; }
+        [NotMapped]
+        public IFormFile? FileUri { set; get; }
+        public string? actualFile { get; set; }
     }
 }
