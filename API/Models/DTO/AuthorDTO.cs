@@ -1,6 +1,4 @@
 ﻿using API.Models.Domain;
-using System.ComponentModel.DataAnnotations;
-
 namespace API.Models.DTO
 {
     public class AuthorDTO
@@ -10,10 +8,6 @@ namespace API.Models.DTO
         public string lastname { get; set; }
         public bool gender { get; set; }
         public string address { get; set; }
-        //[DataType(DataType.Date)]
-        //public DateTime datecreated { get; set; }
-        //[DataType(DataType.Date)]
-        //public DateTime birthday { get; set; }
         public string password { get; set; }
         public string phone { get; set; }
         public string? actualFile { get; set; }
@@ -27,10 +21,6 @@ namespace API.Models.DTO
         public string lastname { get; set; }
         public bool gender { get; set; }
         public string address { get; set; }
-        //[DataType(DataType.Date)]
-        //public DateTime datecreated { get; set; }
-        //[DataType(DataType.Date)]
-        //public DateTime birthday { get; set; }
         public string password { get; set; }
         public string phone { get; set; }
         public string? actualFile { get; set; }

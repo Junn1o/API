@@ -28,7 +28,7 @@ namespace API.Repositories
                 FormattedDatecreated = User.datecreated.ToString("dd/MM/yyyy"),
                 password = User.password,
                 phone = User.phone,
-                actuallFile = User.actualFile,
+                actualFile = User.actualFile,
             }).ToList();
             return userlist;
         }
@@ -44,31 +44,29 @@ namespace API.Repositories
                 FormattedDatecreated = User.datecreated.ToString("dd/MM/yyyy"),
                 password = User.password,
                 phone = User.phone,
-                actuallFile = User.actualFile,
+                actualFile = User.actualFile,
             }).FirstOrDefault();
             return getUserbyDTO;
         }
         public AddUserRequestDTO AddUser(AddUserRequestDTO addUser)
         {
-            string path = "";
             if (addUser.FileUri != null)
             {
-                DateTime parsedDate = DateTime.ParseExact(addUser.FormattedBirthday, "dd/MM/yyyy", CultureInfo.InvariantCulture);
-                addUser.birthday = parsedDate;
+                addUser.birthday = DateTime.ParseExact(addUser.FormattedBirthday, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+                addUser.datecreated = DateTime.Now;
                 var userDomain = new User
                 {
                     firstname = addUser.firstname,
                     lastname = addUser.lastname,
                     address = addUser.address,
                     gender = addUser.gender,
-                    datecreated = DateTime.Now,
+                    datecreated = addUser.datecreated,
                     birthday = addUser.birthday,
                     password = addUser.password,
                     phone = addUser.phone,
                     FileUri = addUser.FileUri,
                 };
-                path = UploadImage(addUser.FileUri, userDomain.Id, addUser.datecreated.ToString("yyyy"));
-                addUser.actualFile = path;
+                addUser.actualFile = UploadImage(addUser.FileUri, userDomain.Id, addUser.datecreated.ToString("yyyy"));
                 userDomain.actualFile = addUser.actualFile;
                 _appDbContext.User.Add(userDomain);
                 _appDbContext.SaveChanges();
@@ -80,18 +78,14 @@ namespace API.Repositories
             var userDomain = _appDbContext.User.FirstOrDefault(u => u.Id == id);
             if (userDomain != null)
             {
-                DateTime parsedDate = DateTime.ParseExact(updateUser.FormattedBirthday, "dd/MM/yyyy", CultureInfo.InvariantCulture);
-                updateUser.birthday = parsedDate;
-                string path = "";
+                updateUser.birthday = DateTime.ParseExact(updateUser.FormattedBirthday, "dd/MM/yyyy", CultureInfo.InvariantCulture);
                 if (UpdateImage(updateUser.FileUri, userDomain.actualFile, id, userDomain.datecreated.ToString("yyyy")) == null)
                 {
-                    path = UploadImage(updateUser.FileUri, id, userDomain.datecreated.ToString("yyyy"));
-                    updateUser.actualFile = path;
+                    updateUser.actualFile = UploadImage(updateUser.FileUri, id, userDomain.datecreated.ToString("yyyy"));
                 }
                 else
                 {
-                    path = UpdateImage(updateUser.FileUri, userDomain.actualFile, id, userDomain.datecreated.ToString("yyyy"));
-                    updateUser.actualFile = path;
+                    updateUser.actualFile = UpdateImage(updateUser.FileUri, userDomain.actualFile, id, userDomain.datecreated.ToString("yyyy"));
                 }
                 userDomain.firstname = updateUser.firstname;
                 userDomain.lastname = updateUser.lastname;
@@ -149,8 +143,6 @@ namespace API.Repositories
                 }
                 else
                 {
-                    //var oldDirectory = Path.GetDirectoryName(oldFullPath);
-                    //throw new Exception(oldDirectory);
                     File.Delete(oldFullPath);
                     var newPath = UploadImage(file, id, datecreated);
                     return newPath;
@@ -163,11 +155,8 @@ namespace API.Repositories
         }
         public bool DeleteImage(string imagePath)
         {
-            //string fileName = Path.GetFileName(oldRelativePath);
             string parentDirectoryName = Path.GetFileName(Path.GetDirectoryName(imagePath));
-            //var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", relativePath);
             var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "user", parentDirectoryName);
-            //!File.Exists(filePath)
             if (!Directory.Exists(folderPath))
             {
                 return false;

@@ -22,7 +22,7 @@ namespace API.Repositories
             {
                 Id = room.Id,
                 title = room.title,
-                authorname = room.author.firstname+" "+room.author.lastname,
+                authorname = room.author.firstname + " " + room.author.lastname,
                 address = room.address,
                 description = room.description,
                 price = room.price,
@@ -37,7 +37,7 @@ namespace API.Repositories
             var getRoombyDomain = _appDbContext.Room.Where(rd => rd.Id == id);
             var getRoombyDTO = getRoombyDomain.Select(room => new RoomwithIdDTO()
             {
-                title = room.title,
+                title= room.title,
                 authorname = room.author.firstname + " " + room.author.lastname,
                 address = room.address,
                 description = room.description,
@@ -127,22 +127,21 @@ namespace API.Repositories
                 isHire = addRoom.isHire,
                 area = addRoom.area,
             };
-            _appDbContext.Room.Add(roomDomain);
-            _appDbContext.SaveChanges();
-            var author = _appDbContext.Author.FirstOrDefault(author => author.Id == roomDomain.Id);
+            //_appDbContext.Room.Add(roomDomain);
+            //_appDbContext.SaveChanges();
+            var author = _appDbContext.Author.FirstOrDefault(author => author.Id == addRoom.authorId);
             string path = "";
             if (author == null)
             {
-                throw new FileNotFoundException("asgasgasg");
+                throw new Exception("Error");
             }
             if (addRoom.FileUri != null)
             {
-                path = UploadImage1(addRoom.FileUri, author.firstname, addRoom.title);
+                path = UploadImage(addRoom.FileUri, author.Id, author.datecreated.ToString("yyyy"), addRoom.title);
                 addRoom.actualFile = path;
                 roomDomain.actualFile = addRoom.actualFile;
-                _appDbContext.Room.Add(roomDomain);
+                //_appDbContext.SaveChanges();
             }
-            _appDbContext.SaveChanges();
             foreach (var id in addRoom.categoryids)
             {
                 var room_category = new Room_Category()
@@ -168,6 +167,11 @@ namespace API.Repositories
                 roomDomain.isApprove = updateRoom.isApprove;
                 roomDomain.isHire = updateRoom.isHire;
                 _appDbContext.SaveChanges();
+            }
+            var authorDomain = _appDbContext.Author.FirstOrDefault(ad => ad.Id == id);
+            if (authorDomain != null&&updateRoom.actualFile!=null)
+            {
+
             }
             var categoryDomain = _appDbContext.Room_Category.Where(a => a.roomId == id).ToList();
             if (categoryDomain != null)
@@ -203,104 +207,77 @@ namespace API.Repositories
             }
             return roomDomain;
         }
-        public List<string> UploadImage(List<IFormFile> file, string author, string roomtitle)
+        public string UploadImage(IFormFile[] file, int id, string datecreated, string roomtitle)
         {
-            int counter = 1;
-            List<string> imagePaths = new List<string>();
-            foreach (var image in file)
-            {
-                string count = $"{counter++}";
-                var uploadFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "user", author, "uploads", roomtitle, roomtitle + "-" + "image_" + count);
-                Directory.CreateDirectory(uploadFolderPath);
-                var filePath = Path.Combine(uploadFolderPath, roomtitle);
-                using (FileStream ms = new FileStream(filePath, FileMode.Create))
-                {
-                    image.CopyTo(ms);
-                }
-                string relativePath = Path.Combine("images", "user", author, "uploads", roomtitle, roomtitle + "-" + "image_" + count);
-                imagePaths.Add(relativePath);
-            }
-            return imagePaths;
-        }
-        public string UploadImage1(IFormFile[] file, string author, string roomtitle)
-        {
-            //var fileName = Path.GetFileName(image.FileName);
             int counter = 1;
             string picture = "";
             foreach (var image in file)
             {
                 string count = $"{counter++}";
-                var uploadFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "user", author, "uploads", roomtitle, roomtitle + "-" + "image_" + count);
+                var fileEx = Path.GetExtension(image.FileName);
+                var uploadFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "author", id + "-" + datecreated, "uploads", roomtitle);
                 Directory.CreateDirectory(uploadFolderPath);
-                var filePath = Path.Combine(uploadFolderPath, roomtitle);
+                var filePath = Path.Combine(uploadFolderPath, roomtitle + "-" + "image_" + count + fileEx);
                 using (FileStream ms = new FileStream(filePath, FileMode.Create))
                 {
                     image.CopyTo(ms);
                 }
-                string relativePath = Path.Combine("images", "user", author, "uploads", roomtitle, roomtitle + "-" + "image_" + count);
+                string relativePath = Path.Combine("images", "author", id + "-" + datecreated, "uploads", roomtitle, roomtitle + "-" + "image_" + count);
                 picture += relativePath + ";";
             }
-            //var path = Path.Combine("images", "room", username + "-" + fileName, fileName);
             return picture;
         }
-        //public string UploadImage2(IFormFile file, string author, string roomtitle)
-        //{
-        //    int counter = 1;
-        //    List<string> imagePaths = new List<string>();
-        //    foreach (var image in file)
-        //    {
-        //        string count = $"{counter++}";
-        //        var uploadFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "user", author, "uploads", roomtitle, roomtitle + "-" + "image_" + count);
-        //        Directory.CreateDirectory(uploadFolderPath);
-        //        var filePath = Path.Combine(uploadFolderPath, roomtitle);
-        //        using (FileStream ms = new FileStream(filePath, FileMode.Create))
-        //        {
-        //            image.CopyTo(ms);
-        //        }
-        //        string relativePath = Path.Combine("images", "user", author, "uploads", roomtitle, roomtitle + "-" + "image_" + count);
-        //        imagePaths.Add(relativePath);
-        //    }
-        //    return imagePaths;
-        //}
-        //public string UpdateImage(IFormFile newImage, string oldRelativePath, string username)
-        //{
-        //    if (oldRelativePath != null)
-        //    {
-        //        var oldFullPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", oldRelativePath);
-        //        if (!File.Exists(oldFullPath))
-        //        {
-        //            return null;
-        //        }
-        //        else
-        //        {
-        //            var oldDirectory = Path.GetDirectoryName(oldFullPath);
-        //            var newRelativePath = UploadImage(newImage, username);
-        //            File.Delete(oldFullPath);
-        //            return newRelativePath;
-        //        }
-        //    }
-        //    else
-        //    {
-        //        return null;
-        //    }
-        //}
-        public bool DeleteImage(string oldRelativePath)
+        public string AddNewImagesToPath(string imagePath, IFormFile[] newFiles)
         {
-            //string fileName = Path.GetFileName(oldRelativePath);
-            string parentDirectoryName = Path.GetFileName(Path.GetDirectoryName(oldRelativePath));
-            //var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", relativePath);
-            var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "user", parentDirectoryName);
-            //!File.Exists(filePath)
-            if (!Directory.Exists(folderPath))
+            string picture = imagePath;
+            string[] existingImagePaths = imagePath.Split(';');
+            string[] parts = existingImagePaths[0].Split('\\');
+            string idAndDate = parts[2];
+            string roomtitle = parts[4];
+            string folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "author", idAndDate, "uploads", roomtitle);
+
+            int startingCount = existingImagePaths.Length;
+
+            foreach (var image in newFiles)
             {
-                return false;
+                string fileName = roomtitle + "-image_" + (startingCount++) + Path.GetExtension(image.FileName);
+
+                var filePath = Path.Combine(folderPath, fileName);
+                using (FileStream ms = new FileStream(filePath, FileMode.Create))
+                {
+                    image.CopyTo(ms);
+                }
+                string relativePath = Path.Combine("images", "author", idAndDate, "uploads", fileName);
+                picture += relativePath + ";";
             }
-            else
+            return picture;
+        }
+        public bool DeleteRoomImages(string imagePath)
+        {
+            bool success = true;
+
+            // Split the imagePath into an array of paths
+            string[] imagePaths = imagePath.Split(';');
+
+            foreach (string path in imagePaths)
             {
-                //File.Delete(filePath);
-                Directory.Delete(folderPath, true);
-                return true;
+                string folderPath = Path.GetDirectoryName(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", path.Replace("/", "\\")));
+                try
+                {
+                    if (Directory.Exists(folderPath))
+                    {
+                        Directory.Delete(folderPath, true);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Handle the exception, for example, log it or set success to false
+                    success = false;
+                    // Log the exception
+                    Console.WriteLine($"Error deleting folder: {ex.Message}");
+                }
             }
+            return success;
         }
     }
 }

@@ -21,7 +21,6 @@ namespace API.Repositories
                 firstname = author.firstname,
                 lastname = author.lastname,
                 address = author.address,
-                gender = author.gender,
                 FormattedBirthday = author.birthday.ToString("dd/MM/yyyy"),
                 FormattedDatecreated = author.datecreated.ToString("dd/MM/yyyy"),
                 password = author.password,
@@ -38,23 +37,20 @@ namespace API.Repositories
                 firstname = author.firstname,
                 lastname = author.lastname,
                 address = author.address,
+                FormattedBirthday = author.birthday.ToString("dd/MM/yyyy"),
+                FormattedDatecreated = author.datecreated.ToString("dd/MM/yyyy"),
                 password = author.password,
                 phone = author.phone,
-                gender = author.gender,
                 actualFile = author.actualFile,
-                FormattedBirthday = author.birthday.ToString("dd/MM/yyyy"),
-                FormattedDatecreated= author.datecreated.ToString("dd/MM/yyyy"),
-                roomlist = author.room.Select(r => r.title).ToList()
+                roomlist = author.room.Select(r=>r.title).ToList()
             }).FirstOrDefault();
             return getCategorybyDTO;
         }
         public AddAuthorRequestDTO AddAuthor(AddAuthorRequestDTO addAuthor)
         {
-            string path = "";
             if (addAuthor.FileUri != null)
             {
-                DateTime parsedDate = DateTime.ParseExact(addAuthor.FormattedBirthday, "dd/MM/yyyy", CultureInfo.InvariantCulture);
-                addAuthor.birthday = parsedDate;
+                addAuthor.birthday = DateTime.ParseExact(addAuthor.FormattedBirthday, "dd/MM/yyyy", CultureInfo.InvariantCulture);
                 var authorDomain = new Author
                 {
                     firstname = addAuthor.firstname,
@@ -67,9 +63,8 @@ namespace API.Repositories
                     datecreated = DateTime.Now,
                     FileUri = addAuthor.FileUri,
                 };
-                path = UploadImage(addAuthor.FileUri, authorDomain.Id, authorDomain.datecreated.ToString("yyyy"));
-                addAuthor.actualFile = path;
-                authorDomain.actualFile= addAuthor.actualFile;
+                addAuthor.actualFile = UploadImage(addAuthor.FileUri, authorDomain.Id, authorDomain.datecreated.ToString("yyyy"));
+                authorDomain.actualFile = addAuthor.actualFile;
                 _appDbContext.Author.Add(authorDomain);
                 _appDbContext.SaveChanges();
             }
@@ -80,18 +75,14 @@ namespace API.Repositories
             var authorDomain = _appDbContext.Author.FirstOrDefault(cd => cd.Id == id);
             if (authorDomain != null)
             {
-                DateTime parsedDate = DateTime.ParseExact(updateAuthor.FormattedBirthday, "dd/MM/yyyy", CultureInfo.InvariantCulture);
-                updateAuthor.birthday = parsedDate;
-                string path = "";
+                updateAuthor.birthday = DateTime.ParseExact(updateAuthor.FormattedBirthday, "dd/MM/yyyy", CultureInfo.InvariantCulture);
                 if (UpdateImage(updateAuthor.FileUri, authorDomain.actualFile, id, authorDomain.datecreated.ToString("yyyy")) == null)
                 {
-                    path = UploadImage(updateAuthor.FileUri, id, updateAuthor.datecreated.ToString("yyyy"));
-                    updateAuthor.actualFile = path;
+                    updateAuthor.actualFile = UploadImage(updateAuthor.FileUri, id, updateAuthor.datecreated.ToString("yyyy"));
                 }
                 else
                 {
-                    path = UpdateImage(updateAuthor.FileUri, authorDomain.actualFile, id, authorDomain.datecreated.ToString("yyyy"));
-                    updateAuthor.actualFile = path;
+                    updateAuthor.actualFile = UpdateImage(updateAuthor.FileUri, authorDomain.actualFile, id, authorDomain.datecreated.ToString("yyyy"));
                 }
                 authorDomain.firstname = updateAuthor.firstname;
                 authorDomain.lastname = updateAuthor.lastname;

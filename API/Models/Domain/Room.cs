@@ -14,13 +14,14 @@ namespace API.Models.Domain
         public int authorId { get; set; }
         public Author author { get; set; }
         public List<Room_Category> room_category {get; set; }
-        public List<Photo> room_photo { get; set; }
         public bool isApprove { get; set; }
         public bool isHire { get; set; }
+        [DataType(DataType.Date)]
+        public DateTime datecreatedroom { get; set; }
         public int area { get; set; }
         public string address { get; set; }
         [NotMapped]
-        public IFormFile? FileUri { set; get; }
+        public IFormFile[]? FileUri { set; get; }
         public string? actualFile { get; set; }
     }
 }
