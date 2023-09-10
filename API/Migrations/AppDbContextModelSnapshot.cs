@@ -54,6 +54,9 @@ namespace API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<byte[]>("image")
+                        .HasColumnType("varbinary(max)");
+
                     b.Property<string>("password")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -64,7 +67,7 @@ namespace API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Author");
+                    b.ToTable("Author", (string)null);
                 });
 
             modelBuilder.Entity("API.Models.Domain.Category", b =>
@@ -81,7 +84,7 @@ namespace API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Category");
+                    b.ToTable("Category", (string)null);
                 });
 
             modelBuilder.Entity("API.Models.Domain.Photo", b =>
@@ -92,8 +95,9 @@ namespace API.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("actualFile")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<byte[]>("image")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<int>("roomId")
                         .HasColumnType("int");
@@ -102,7 +106,7 @@ namespace API.Migrations
 
                     b.HasIndex("roomId");
 
-                    b.ToTable("Photo");
+                    b.ToTable("Photo", (string)null);
                 });
 
             modelBuilder.Entity("API.Models.Domain.Room", b =>
@@ -119,9 +123,6 @@ namespace API.Migrations
                     b.Property<string>("address")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("area")
-                        .HasColumnType("int");
 
                     b.Property<int>("authorId")
                         .HasColumnType("int");
@@ -148,7 +149,7 @@ namespace API.Migrations
 
                     b.HasIndex("authorId");
 
-                    b.ToTable("Room");
+                    b.ToTable("Room", (string)null);
                 });
 
             modelBuilder.Entity("API.Models.Domain.Room_Category", b =>
@@ -171,7 +172,7 @@ namespace API.Migrations
 
                     b.HasIndex("roomId");
 
-                    b.ToTable("Room_Category");
+                    b.ToTable("Room_Category", (string)null);
                 });
 
             modelBuilder.Entity("API.Models.Domain.User", b =>
@@ -206,6 +207,9 @@ namespace API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<byte[]>("image")
+                        .HasColumnType("varbinary(max)");
+
                     b.Property<string>("password")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -216,7 +220,7 @@ namespace API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("User");
+                    b.ToTable("User", (string)null);
                 });
 
             modelBuilder.Entity("API.Models.Domain.Photo", b =>
