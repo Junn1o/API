@@ -66,7 +66,7 @@ namespace API.Controllers
             return Ok(room);
         }
         [HttpPut("update-room-with-id")]
-        public IActionResult UpdateRoom(int id, [FromBody] AddRoomRequestDTO updateRoom)
+        public IActionResult UpdateRoom(int id, [FromForm] AddRoomRequestDTO updateRoom)
         {
             var roomUpdate = _roomRepository.UpdateRoom(id, updateRoom);
             return Ok(roomUpdate);
