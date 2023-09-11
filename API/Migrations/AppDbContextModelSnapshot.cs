@@ -54,9 +54,6 @@ namespace API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<byte[]>("image")
-                        .HasColumnType("varbinary(max)");
-
                     b.Property<string>("password")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -67,7 +64,7 @@ namespace API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Author", (string)null);
+                    b.ToTable("Author");
                 });
 
             modelBuilder.Entity("API.Models.Domain.Category", b =>
@@ -84,29 +81,7 @@ namespace API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Category", (string)null);
-                });
-
-            modelBuilder.Entity("API.Models.Domain.Photo", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<byte[]>("image")
-                        .IsRequired()
-                        .HasColumnType("varbinary(max)");
-
-                    b.Property<int>("roomId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("roomId");
-
-                    b.ToTable("Photo", (string)null);
+                    b.ToTable("Category");
                 });
 
             modelBuilder.Entity("API.Models.Domain.Room", b =>
@@ -124,8 +99,14 @@ namespace API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("area")
+                        .HasColumnType("int");
+
                     b.Property<int>("authorId")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("datecreatedroom")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("description")
                         .IsRequired()
@@ -149,7 +130,7 @@ namespace API.Migrations
 
                     b.HasIndex("authorId");
 
-                    b.ToTable("Room", (string)null);
+                    b.ToTable("Room");
                 });
 
             modelBuilder.Entity("API.Models.Domain.Room_Category", b =>
@@ -172,7 +153,7 @@ namespace API.Migrations
 
                     b.HasIndex("roomId");
 
-                    b.ToTable("Room_Category", (string)null);
+                    b.ToTable("Room_Category");
                 });
 
             modelBuilder.Entity("API.Models.Domain.User", b =>
@@ -207,9 +188,6 @@ namespace API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<byte[]>("image")
-                        .HasColumnType("varbinary(max)");
-
                     b.Property<string>("password")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -220,18 +198,7 @@ namespace API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("User", (string)null);
-                });
-
-            modelBuilder.Entity("API.Models.Domain.Photo", b =>
-                {
-                    b.HasOne("API.Models.Domain.Room", "room")
-                        .WithMany("room_photo")
-                        .HasForeignKey("roomId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("room");
+                    b.ToTable("User");
                 });
 
             modelBuilder.Entity("API.Models.Domain.Room", b =>
@@ -277,8 +244,6 @@ namespace API.Migrations
             modelBuilder.Entity("API.Models.Domain.Room", b =>
                 {
                     b.Navigation("room_category");
-
-                    b.Navigation("room_photo");
                 });
 #pragma warning restore 612, 618
         }
