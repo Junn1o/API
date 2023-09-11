@@ -28,6 +28,8 @@ namespace API.Repositories
                 price = room.price,
                 isApprove = room.isApprove,
                 isHire = room.isHire,
+                actualFile = room.actualFile,
+                area = room.area,
                 categorylist = room.room_category.Select(rc => rc.category.name).ToList()
             }).ToList();
             return roomlist;
@@ -44,6 +46,8 @@ namespace API.Repositories
                 price = room.price,
                 isApprove = room.isApprove,
                 isHire = room.isHire,
+                actualFile = room.actualFile,
+                area = room.area,
                 categorylist = room.room_category.Select(rc => rc.category.name).ToList()
             }).FirstOrDefault();
             return getRoombyDTO;
@@ -60,6 +64,8 @@ namespace API.Repositories
                 price = room.price,
                 isApprove = room.isApprove,
                 isHire = room.isHire,
+                actualFile = room.actualFile,
+                area = room.area,
                 categorylist = room.room_category.Select(rc => rc.category.name).ToList()
             }).ToList();
             return roomlist;
@@ -76,6 +82,8 @@ namespace API.Repositories
                 price = room.price,
                 isApprove = room.isApprove,
                 isHire = room.isHire,
+                actualFile = room.actualFile,
+                area = room.area,
                 categorylist = room.room_category.Select(rc => rc.category.name).ToList()
             }).ToList();
             return roomlist;
@@ -93,6 +101,8 @@ namespace API.Repositories
                 price = room.price,
                 isApprove = room.isApprove,
                 isHire = room.isHire,
+                actualFile = room.actualFile,
+                area = room.area,
                 categorylist = room.room_category.Select(rc => rc.category.name).ToList()
             }).ToList();
             return roomlist;
@@ -110,6 +120,8 @@ namespace API.Repositories
                 price = room.price,
                 isApprove = room.isApprove,
                 isHire = room.isHire,
+                actualFile = room.actualFile,
+                area = room.area,
                 categorylist = room.room_category.Select(rc => rc.category.name).ToList()
             }).ToList();
             return roomlist;
@@ -131,11 +143,7 @@ namespace API.Repositories
             _appDbContext.Room.Add(roomDomain);
             _appDbContext.SaveChanges();
             var author = _appDbContext.Author.FirstOrDefault(author => author.Id == addRoom.authorId);
-            if (author == null)
-            {
-                throw new Exception("Error");
-            }
-            if (addRoom.FileUri != null)
+            if (addRoom.FileUri != null && author!=null)
             {
                 addRoom.actualFile = UploadImage(addRoom.FileUri, author.Id, author.datecreated.ToString("yyyy"), roomDomain.Id);
                 roomDomain.actualFile = addRoom.actualFile;
@@ -158,6 +166,20 @@ namespace API.Repositories
             var roomDomain = _appDbContext.Room.FirstOrDefault(r => r.Id == id);
             if (roomDomain != null)
             {
+                var authorDomain = _appDbContext.Author.FirstOrDefault(ad => ad.Id == roomDomain.authorId);
+                if (authorDomain != null && updateRoom.FileUri != null)
+                {
+                    if (roomDomain.actualFile == null || AddNewImagesToPath(roomDomain.actualFile, updateRoom.FileUri) == null)
+                    {
+                        updateRoom.actualFile = UploadImage(updateRoom.FileUri, authorDomain.Id, authorDomain.datecreated.ToString("yyyy"), roomDomain.Id);
+                        roomDomain.actualFile = updateRoom.actualFile;
+                    }
+                    else
+                    {
+                        updateRoom.actualFile = AddNewImagesToPath(roomDomain.actualFile, updateRoom.FileUri);
+                        roomDomain.actualFile = updateRoom.actualFile;
+                    }
+                }
                 roomDomain.title = updateRoom.title;
                 roomDomain.price = updateRoom.price;
                 roomDomain.address = updateRoom.address;
@@ -166,18 +188,6 @@ namespace API.Repositories
                 roomDomain.isApprove = updateRoom.isApprove;
                 roomDomain.isHire = updateRoom.isHire;
                 _appDbContext.SaveChanges();
-            }
-            var authorDomain = _appDbContext.Author.FirstOrDefault(ad => ad.Id == roomDomain.authorId);
-            if (authorDomain != null && updateRoom.FileUri!=null)
-            {
-                if (roomDomain.actualFile==null || AddNewImagesToPath(roomDomain.actualFile, updateRoom.FileUri)==null)
-                {
-                    updateRoom.actualFile = UploadImage(updateRoom.FileUri, authorDomain.Id,authorDomain.datecreated.ToString("yyyy"), roomDomain.Id);
-                }
-                else
-                {
-                    updateRoom.actualFile = AddNewImagesToPath(roomDomain.actualFile, updateRoom.FileUri);
-                }
             }
             var categoryroomDomain = _appDbContext.Room_Category.Where(a => a.roomId == id).ToList();
             if (categoryroomDomain != null)
@@ -203,17 +213,17 @@ namespace API.Repositories
             var roomCategory = _appDbContext.Room_Category.Where(n => n.roomId == id);
             if (roomDomain != null)
             {
-                if (roomDomain.actualFile != null && DeleteRoomImages(roomDomain.actualFile) == true)
+                if (roomDomain.actualFile != null)
                 {
                     DeleteRoomImages(roomDomain.actualFile);
                 }
                 if (roomCategory.Any())
                 {
-                    //_appDbContext.Room_Category.RemoveRange(roomCategory);
-                    //_appDbContext.SaveChanges();
+                    _appDbContext.Room_Category.RemoveRange(roomCategory);
+                    _appDbContext.SaveChanges();
                 }
-                //_appDbContext.Room.Remove(roomDomain);
-                //_appDbContext.SaveChanges();
+                _appDbContext.Room.Remove(roomDomain);
+                _appDbContext.SaveChanges();
             }
             return roomDomain;
         }

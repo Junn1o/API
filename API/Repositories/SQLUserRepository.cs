@@ -163,7 +163,6 @@ namespace API.Repositories
             }
             else
             {
-                //File.Delete(filePath);
                 Directory.Delete(folderPath, true);
                 return true;
             }
