@@ -197,13 +197,17 @@ namespace API.Repositories
             var roomCategory = _appDbContext.Room_Category.Where(n => n.roomId == id);
             if (roomDomain != null)
             {
+                if (roomDomain.actualFile != null && DeleteRoomImages(roomDomain.actualFile) != null)
+                {
+                    DeleteRoomImages(roomDomain.actualFile);
+                }
                 if (roomCategory.Any())
                 {
-                    _appDbContext.Room_Category.RemoveRange(roomCategory);
-                    _appDbContext.SaveChanges();
+                    //_appDbContext.Room_Category.RemoveRange(roomCategory);
+                    //_appDbContext.SaveChanges();
                 }
-                _appDbContext.Room.Remove(roomDomain);
-                _appDbContext.SaveChanges();
+                //_appDbContext.Room.Remove(roomDomain);
+                //_appDbContext.SaveChanges();
             }
             return roomDomain;
         }
@@ -261,7 +265,7 @@ namespace API.Repositories
 
             foreach (string path in imagePaths)
             {
-                string folderPath = Path.GetDirectoryName(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", path.Replace("/", "\\")));
+                string folderPath = Path.GetDirectoryName(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", path));
                 try
                 {
                     if (Directory.Exists(folderPath))
