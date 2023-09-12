@@ -2,6 +2,7 @@
 using API.Data;
 using API.Models.Domain;
 using API.Models.DTO;
+using Microsoft.AspNetCore.Components.Forms;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -31,10 +32,10 @@ namespace API.Repositories
             }).ToList();
             return userlist;
         }
-        public UserDTO GetUserById(int id)
+        public UserwithIdDTO GetUserById(int id)
         {
             var getUserbyDomain = _appDbContext.User.Where(rd => rd.Id == id);
-            var getUserbyDTO = getUserbyDomain.Select(User => new UserDTO()
+            var getUserbyDTO = getUserbyDomain.Select(User => new UserwithIdDTO()
             {
                 firstname = User.firstname,
                 lastname = User.lastname,
@@ -162,7 +163,6 @@ namespace API.Repositories
             }
             else
             {
-                //File.Delete(filePath);
                 Directory.Delete(folderPath, true);
                 return true;
             }

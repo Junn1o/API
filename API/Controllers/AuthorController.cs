@@ -35,13 +35,18 @@ namespace API.Controllers
                 return NotFound("Data Empty");
         }
         [HttpPost("add - author")]
-        public IActionResult AddAuthor([FromBody] AddAuthorRequestDTO addAuthor)
+        public IActionResult AddAuthor([FromForm] AddAuthorRequestDTO addAuthor)
         {
             var authorAdd = _authorRepository.AddAuthor(addAuthor);
-            return Ok(authorAdd);
+            if (authorAdd == null)
+            {
+                return null;
+            }
+            else
+                return Ok(authorAdd);
         }
         [HttpPut("update-author-with-id")]
-        public IActionResult UpdateAuthor(int id, [FromBody] AddAuthorRequestDTO updateAuthor)
+        public IActionResult UpdateAuthor(int id, [FromForm] AddAuthorRequestDTO updateAuthor)
         {
             var authorUpdate = _authorRepository.UpdateAuthorById(id, updateAuthor);
             return Ok(authorUpdate);

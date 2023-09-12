@@ -6,10 +6,10 @@ using System.Globalization;
 
 namespace API.Repositories
 {
-    public class SQLAuthorRepository :IAuthorRepository
+    public class SQLAuthorRepository : IAuthorRepository
     {
         private readonly AppDbContext _appDbContext;
-        public SQLAuthorRepository (AppDbContext appDbContext)
+        public SQLAuthorRepository(AppDbContext appDbContext)
         {
             _appDbContext = appDbContext;
         }

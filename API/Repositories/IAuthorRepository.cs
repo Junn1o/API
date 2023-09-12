@@ -7,7 +7,7 @@ namespace API.Repositories
         List<AuthorDTO> GellAllAuthors();
         AuthorwithIdDTO GetAuthorById(int id);
         AddAuthorRequestDTO AddAuthor(AddAuthorRequestDTO addAuthor);
-        AddAuthorRequestDTO UpdateAuthorById(int id, AddAuthorRequestDTO updateAuthor);
+        AddAuthorRequestDTO? UpdateAuthorById(int id, AddAuthorRequestDTO updateAuthor);
         Author? DeleteAuthorById(int id);
     }
 }

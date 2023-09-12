@@ -29,7 +29,6 @@ namespace API.Controllers
             var roomlist = _roomRepository.GetAllRoomisHire();
             return Ok(roomlist);
         }
-        [EnableCors("MyPolicy")]
         [HttpGet("get-all-room-not-hire")]
         public IActionResult GetAllRoomnotHire()
         {
@@ -62,19 +61,12 @@ namespace API.Controllers
         [HttpPost("add - room")]
         public IActionResult AddRoom([FromForm] AddRoomRequestDTO addRoom)
         {
-            IFormFile imageFile = Request.Form.Files["imageFile"]; // Assuming the form field is named "imageFile"
-
-            if (imageFile == null)
-            {
-                return BadRequest("No image provided.");
-            }
-
-            var room = _roomRepository.AddRoom(addRoom, imageFile);
+            var room = _roomRepository.AddRoom(addRoom);
 
             return Ok(room);
         }
         [HttpPut("update-room-with-id")]
-        public IActionResult UpdateRoom(int id, [FromBody] AddRoomRequestDTO updateRoom)
+        public IActionResult UpdateRoom(int id, [FromForm] AddRoomRequestDTO updateRoom)
         {
             var roomUpdate = _roomRepository.UpdateRoom(id, updateRoom);
             return Ok(roomUpdate);

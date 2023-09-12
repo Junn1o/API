@@ -1,7 +1,11 @@
 ﻿using API.Data;
 using API.Models.Domain;
 using API.Models.DTO;
+using System;
+using System.Diagnostics.Metrics;
 using System.IO;
+using System.Linq;
+
 namespace API.Repositories
 {
     public class SQLRoomRepository : IRoomRepository
@@ -24,6 +28,8 @@ namespace API.Repositories
                 price = room.price,
                 isApprove = room.isApprove,
                 isHire = room.isHire,
+                actualFile = room.actualFile,
+                area = room.area,
                 categorylist = room.room_category.Select(rc => rc.category.name).ToList()
             }).ToList();
             return roomlist;
@@ -40,7 +46,9 @@ namespace API.Repositories
                 price = room.price,
                 isApprove = room.isApprove,
                 isHire = room.isHire,
-                categorylist = room.room_category.Select(rc=> rc.category.name).ToList()
+                actualFile = room.actualFile,
+                area = room.area,
+                categorylist = room.room_category.Select(rc => rc.category.name).ToList()
             }).FirstOrDefault();
             return getRoombyDTO;
         }
@@ -56,6 +64,8 @@ namespace API.Repositories
                 price = room.price,
                 isApprove = room.isApprove,
                 isHire = room.isHire,
+                actualFile = room.actualFile,
+                area = room.area,
                 categorylist = room.room_category.Select(rc => rc.category.name).ToList()
             }).ToList();
             return roomlist;
@@ -72,6 +82,8 @@ namespace API.Repositories
                 price = room.price,
                 isApprove = room.isApprove,
                 isHire = room.isHire,
+                actualFile = room.actualFile,
+                area = room.area,
                 categorylist = room.room_category.Select(rc => rc.category.name).ToList()
             }).ToList();
             return roomlist;
@@ -89,6 +101,8 @@ namespace API.Repositories
                 price = room.price,
                 isApprove = room.isApprove,
                 isHire = room.isHire,
+                actualFile = room.actualFile,
+                area = room.area,
                 categorylist = room.room_category.Select(rc => rc.category.name).ToList()
             }).ToList();
             return roomlist;
@@ -106,11 +120,13 @@ namespace API.Repositories
                 price = room.price,
                 isApprove = room.isApprove,
                 isHire = room.isHire,
+                actualFile = room.actualFile,
+                area = room.area,
                 categorylist = room.room_category.Select(rc => rc.category.name).ToList()
             }).ToList();
             return roomlist;
         }
-        public AddRoomRequestDTO AddRoom(AddRoomRequestDTO addRoom, IFormFile imageFile)
+        public AddRoomRequestDTO AddRoom(AddRoomRequestDTO addRoom)
         {
             var roomDomain = new Room
             {
@@ -122,21 +138,16 @@ namespace API.Repositories
                 isApprove = addRoom.isApprove,
                 isHire = addRoom.isHire,
                 area = addRoom.area,
+                datecreatedroom = DateTime.Now,
             };
-            //_appDbContext.Room.Add(roomDomain);
-            //_appDbContext.SaveChanges();
+            _appDbContext.Room.Add(roomDomain);
+            _appDbContext.SaveChanges();
             var author = _appDbContext.Author.FirstOrDefault(author => author.Id == addRoom.authorId);
-            string path = "";
-            if (author == null)
+            if (addRoom.FileUri != null && author!=null)
             {
-                throw new Exception("Error");
-            }
-            if (addRoom.FileUri != null)
-            {
-                path = UploadImage(addRoom.FileUri, author.Id, author.datecreated.ToString("yyyy"), addRoom.title);
-                addRoom.actualFile = path;
+                addRoom.actualFile = UploadImage(addRoom.FileUri, author.Id, author.datecreated.ToString("yyyy"), roomDomain.Id);
                 roomDomain.actualFile = addRoom.actualFile;
-                //_appDbContext.SaveChanges();
+                _appDbContext.SaveChanges();
             }
             foreach (var id in addRoom.categoryids)
             {
@@ -145,8 +156,8 @@ namespace API.Repositories
                     roomId = roomDomain.Id,
                     categoryId = id,
                 };
-                //_appDbContext.Room_Category.Add(room_category);
-                //_appDbContext.SaveChanges();
+                _appDbContext.Room_Category.Add(room_category);
+                _appDbContext.SaveChanges();
             }
             return addRoom;
         }
@@ -155,6 +166,20 @@ namespace API.Repositories
             var roomDomain = _appDbContext.Room.FirstOrDefault(r => r.Id == id);
             if (roomDomain != null)
             {
+                var authorDomain = _appDbContext.Author.FirstOrDefault(ad => ad.Id == roomDomain.authorId);
+                if (authorDomain != null && updateRoom.FileUri != null)
+                {
+                    if (roomDomain.actualFile == null || AddNewImagesToPath(roomDomain.actualFile, updateRoom.FileUri) == null)
+                    {
+                        updateRoom.actualFile = UploadImage(updateRoom.FileUri, authorDomain.Id, authorDomain.datecreated.ToString("yyyy"), roomDomain.Id);
+                        roomDomain.actualFile = updateRoom.actualFile;
+                    }
+                    else
+                    {
+                        updateRoom.actualFile = AddNewImagesToPath(roomDomain.actualFile, updateRoom.FileUri);
+                        roomDomain.actualFile = updateRoom.actualFile;
+                    }
+                }
                 roomDomain.title = updateRoom.title;
                 roomDomain.price = updateRoom.price;
                 roomDomain.address = updateRoom.address;
@@ -164,15 +189,10 @@ namespace API.Repositories
                 roomDomain.isHire = updateRoom.isHire;
                 _appDbContext.SaveChanges();
             }
-            var authorDomain = _appDbContext.Author.FirstOrDefault(ad => ad.Id == id);
-            if (authorDomain != null&&updateRoom.actualFile!=null)
+            var categoryroomDomain = _appDbContext.Room_Category.Where(a => a.roomId == id).ToList();
+            if (categoryroomDomain != null)
             {
-
-            }
-            var categoryDomain = _appDbContext.Room_Category.Where(a => a.roomId == id).ToList();
-            if (categoryDomain != null)
-            {
-                _appDbContext.Room_Category.RemoveRange(categoryDomain);
+                _appDbContext.Room_Category.RemoveRange(categoryroomDomain);
                 _appDbContext.SaveChanges();
             }
             foreach (var categoryid in updateRoom.categoryids)
@@ -193,6 +213,10 @@ namespace API.Repositories
             var roomCategory = _appDbContext.Room_Category.Where(n => n.roomId == id);
             if (roomDomain != null)
             {
+                if (roomDomain.actualFile != null)
+                {
+                    DeleteRoomImages(roomDomain.actualFile);
+                }
                 if (roomCategory.Any())
                 {
                     _appDbContext.Room_Category.RemoveRange(roomCategory);
@@ -203,7 +227,7 @@ namespace API.Repositories
             }
             return roomDomain;
         }
-        public string UploadImage(IFormFile[] file, int id, string datecreated, string roomtitle)
+        public string UploadImage(IFormFile[] file, int id, string adatecreated, int roomid)
         {
             int counter = 1;
             string picture = "";
@@ -211,14 +235,14 @@ namespace API.Repositories
             {
                 string count = $"{counter++}";
                 var fileEx = Path.GetExtension(image.FileName);
-                var uploadFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "author", id + "-" + datecreated, "uploads", roomtitle);
+                var uploadFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "author", id + "-" + adatecreated, "uploads", roomid.ToString());
                 Directory.CreateDirectory(uploadFolderPath);
-                var filePath = Path.Combine(uploadFolderPath, roomtitle + "-" + "image_" + count + fileEx);
+                var filePath = Path.Combine(uploadFolderPath, roomid + "-" + "image_" + count + fileEx);
                 using (FileStream ms = new FileStream(filePath, FileMode.Create))
                 {
                     image.CopyTo(ms);
                 }
-                string relativePath = Path.Combine("images", "author", id + "-" + datecreated, "uploads", roomtitle, roomtitle + "-" + "image_" + count);
+                string relativePath = Path.Combine("images", "author", id + "-" + adatecreated, "uploads", roomid.ToString(), roomid + "-" + "image_" + count);
                 picture += relativePath + ";";
             }
             return picture;
@@ -229,51 +253,44 @@ namespace API.Repositories
             string[] existingImagePaths = imagePath.Split(';');
             string[] parts = existingImagePaths[0].Split('\\');
             string idAndDate = parts[2];
-            string roomtitle = parts[4];
-            string folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "author", idAndDate, "uploads", roomtitle);
-
-            int startingCount = existingImagePaths.Length;
-
-            foreach (var image in newFiles)
+            string roomid = parts[4];
+            string folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "author", idAndDate, "uploads", roomid);
+            if (!File.Exists(existingImagePaths[0]))
             {
-                string fileName = roomtitle + "-image_" + (startingCount++) + Path.GetExtension(image.FileName);
-
-                var filePath = Path.Combine(folderPath, fileName);
-                using (FileStream ms = new FileStream(filePath, FileMode.Create))
-                {
-                    image.CopyTo(ms);
-                }
-                string relativePath = Path.Combine("images", "author", idAndDate, "uploads", fileName);
-                picture += relativePath + ";";
+                return null;
             }
-            return picture;
+            else
+            {
+                int startingCount = existingImagePaths.Length;
+
+                foreach (var image in newFiles)
+                {
+                    string fileName = roomid + "-image_" + (startingCount++) + Path.GetExtension(image.FileName);
+
+                    var filePath = Path.Combine(folderPath, fileName);
+                    using (FileStream ms = new FileStream(filePath, FileMode.Create))
+                    {
+                        image.CopyTo(ms);
+                    }
+                    string relativePath = Path.Combine("images", "author", idAndDate, "uploads", fileName);
+                    picture += relativePath + ";";
+                }
+                return picture;
+            }
         }
         public bool DeleteRoomImages(string imagePath)
         {
-            bool success = true;
-
-            // Split the imagePath into an array of paths
             string[] imagePaths = imagePath.Split(';');
-
-            foreach (string path in imagePaths)
+            string folderPath = Path.GetDirectoryName(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", imagePaths[0]));
+            if (Directory.Exists(folderPath))
             {
-                string folderPath = Path.GetDirectoryName(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", path.Replace("/", "\\")));
-                try
-                {
-                    if (Directory.Exists(folderPath))
-                    {
-                        Directory.Delete(folderPath, true);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    // Handle the exception, for example, log it or set success to false
-                    success = false;
-                    // Log the exception
-                    Console.WriteLine($"Error deleting folder: {ex.Message}");
-                }
+                Directory.Delete(folderPath, true);
+                return true;
             }
-            return success;
+            else
+            {
+                return false;
+            }
         }
     }
 }
