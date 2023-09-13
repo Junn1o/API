@@ -187,6 +187,7 @@ namespace API.Repositories
                 roomDomain.authorId = updateRoom.authorId;
                 roomDomain.isApprove = updateRoom.isApprove;
                 roomDomain.isHire = updateRoom.isHire;
+                roomDomain.area = updateRoom.area;
                 _appDbContext.SaveChanges();
             }
             var categoryroomDomain = _appDbContext.Room_Category.Where(a => a.roomId == id).ToList();
