@@ -18,19 +18,20 @@ namespace API.Repositories
 
         public List<RoomDTO> GetAllRoom()
         {
+            //string[] imagePaths = imagePath.Split(';');
             var roomlist = _appDbContext.Room.Select(room => new RoomDTO()
             {
                 Id = room.Id,
                 title = room.title,
-                authorname = room.author.firstname + " " + room.author.lastname,
+                //authorname = room.author.firstname + " " + room.author.lastname,
                 address = room.address,
                 description = room.description,
                 price = room.price,
-                isApprove = room.isApprove,
-                isHire = room.isHire,
-                actualFile = room.actualFile,
+                //isApprove = room.isApprove,
+                //isHire = room.isHire,
+                actualFile = GetImageFromString(room.actualFile),
                 area = room.area,
-                categorylist = room.room_category.Select(rc => rc.category.name).ToList()
+                //categorylist = room.room_category.Select(rc => rc.category.name).ToList()
             }).ToList();
             return roomlist;
         }
@@ -242,7 +243,7 @@ namespace API.Repositories
                 {
                     image.CopyTo(ms);
                 }
-                string relativePath = Path.Combine("images", "author", id + "-" + adatecreated, "uploads", roomid.ToString(), roomid + "-" + "image_" + count);
+                string relativePath = Path.Combine("images", "author", id + "-" + adatecreated, "uploads", roomid.ToString(), roomid + "-" + "image_" + count + fileEx);
                 picture += relativePath + ";";
             }
             return picture;
@@ -272,7 +273,7 @@ namespace API.Repositories
                     {
                         image.CopyTo(ms);
                     }
-                    string relativePath = Path.Combine("images", "author", idAndDate, "uploads", fileName);
+                    string relativePath = Path.Combine("images", "author", idAndDate, "uploads", fileName + Path.GetExtension(image.FileName));
                     picture += relativePath + ";";
                 }
                 return picture;
@@ -290,6 +291,28 @@ namespace API.Repositories
             else
             {
                 return false;
+            }
+        }
+        private static string GetImageFromString(string actualFile)
+        {
+            // Split the actualFile string by semicolons
+            if (actualFile==null)
+            {
+                return null;
+            }
+            else
+            {
+                string[] imagePaths = actualFile.Split(';');
+
+                // Check if there are any paths, and return the first one if available
+                if (imagePaths.Length > 0)
+                {
+                    return imagePaths[1];
+                }
+                else
+
+                    // Return a default value or handle the case where there are no image paths
+                    return "no image"; // Replace with an appropriate default value
             }
         }
     }
