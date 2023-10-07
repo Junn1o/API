@@ -4,6 +4,7 @@ namespace API.Models.DTO
     public class UserDTO
     {
         public int Id { get; set; }
+        public string fullname { get; set; }
         public string firstname { get; set; }
         public string lastname { get; set; }
         public bool gender { get; set; }

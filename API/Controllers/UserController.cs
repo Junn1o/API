@@ -28,7 +28,7 @@ namespace API.Controllers
             var user = _userRepository.GetUserById(id);
             if (user != null)
             {
-                return Ok(User);
+                return Ok(user);
             }
             else
                 return NotFound("Data Empty");
