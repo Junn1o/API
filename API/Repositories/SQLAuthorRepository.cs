@@ -18,8 +18,7 @@ namespace API.Repositories
             var authorlist = _appDbContext.Author.Select(author => new AuthorDTO()
             {
                 Id = author.Id,
-                firstname = author.firstname,
-                lastname = author.lastname,
+                fullname = author.firstname,
                 address = author.address,
                 FormattedBirthday = author.birthday.ToString("dd/MM/yyyy"),
                 FormattedDatecreated = author.datecreated.ToString("dd/MM/yyyy"),
